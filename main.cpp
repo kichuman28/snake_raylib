@@ -12,7 +12,7 @@ int cellCount = 25;                                                         //th
 
 class Food{                                                                 //For the class Food, you need to know the x and y coordinate of the food. 
     public:                                                                 //So we can set that as the attribute in a in-built struct called Vector2 which stores the coordinates.
-        Vector2 position = {5, 6};                                          //Here this stands for 5th row and 6th column.
+        Vector2 position;                                                   //Here this stands for 5th row and 6th column.
         Texture2D texture;                                                  //So Texture2D is a data structure that allows us to convert the image to a type that can be rendered on screen in the most optimal way.
 
         Food(){                                                             //So this is like the init function(constructor), we want this called whenever an object is made. Here we want the image to be loaded each time the object is made.
@@ -20,12 +20,21 @@ class Food{                                                                 //Fo
             Image image = LoadImage("Graphics/food.png");
             texture = LoadTextureFromImage(image);                          //Loads the texture from the image.
             UnloadImage(image);                                             //Unloads the image to free some memory.
+            position = GenerateRandomPos();
 
         }
 
 
         ~Food(){
             UnloadTexture(texture);                                         //This is for unloading the texture after the object is destroyed. This is called a destructor.
+        }
+
+
+        Vector2 GenerateRandomPos(){                                        //A random position generator function so that each time the game loads the food is at a different position.
+            float x = GetRandomValue(0, cellCount - 1);
+            float y = GetRandomValue(0, cellCount - 1);
+
+            return Vector2{x, y};
         }
 
 
