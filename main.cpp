@@ -28,10 +28,14 @@ class Snake{
 
         void draw(){                                                        //A function which uses a for loop to traverse through the deque and mark all the positions as dark green.
             for(unsigned int i = 0; i < body.size(); i++){
-                int x = body[i].x;
-                int y = body[i].y;
-                DrawRectangle(x * cellSize, y * cellSize, cellSize,
-                 cellSize, darkGreen);  
+                float x = body[i].x;
+                float y = body[i].y;
+                // DrawRectangle(x * cellSize, y * cellSize, cellSize,      //I am using a rounded rectangle now
+                //  cellSize, darkGreen);  
+
+                Rectangle segment  = Rectangle{x * (float)cellSize,
+                 y * (float)cellSize,(float)cellSize, (float)cellSize};     //For rounded rectangles you need to pass a rectangle structure as the argument. 
+                DrawRectangleRounded(segment, 0.5, 6, darkGreen);           //This in-built function needs the rectangle, the radius, segments(affects the smoothness of the corners) and color
             }                                                               
         }
 };
