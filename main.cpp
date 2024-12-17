@@ -1,6 +1,7 @@
 #include <iostream>
 #include <raylib.h>
 #include <deque>
+#include <raymath.h>
 
 using namespace std;
 // ----------------------------------------------------------GLOBAL VARIABLES------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -11,6 +12,18 @@ Color darkGreen = {43, 51, 24, 255};
 
 int cellSize = 30;                                                          //This is basically dividing the screen into cells for placement of objects. Nothing is happening here, 
 int cellCount = 25;                                                         //this just indicates that there is 25 blocks of 30 size each. So 25*30 = 750, which is the size of our screen.
+
+double lastUpdateTime = 0;                                                  //So this is for updating the position of the snake every 200 milliseconds
+
+bool eventTriggered(double interval){                                       //For that we check how much time has passed by subtracting the last update time from the current time, if it is greater than the given interval, then we return true to update the position else we return false.
+    double currentTime = GetTime();
+    if(currentTime - lastUpdateTime >= interval){
+        lastUpdateTime = currentTime;
+        return true;
+    }
+    return false;
+}
+
 
 // ----------------------------------------------------------GLOBAL VARIABLES ENDS HERE------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -25,6 +38,7 @@ class Snake{
     public:
         deque<Vector2> body = {Vector2{6, 9}, Vector2{5, 9},                //So I need a snake class for drawing the body of the snake. Using a deque as the body. Currently hardcoding 3 positions for the snake
          Vector2{4, 9}};
+        Vector2 direction = {1, 0};                                         //Storing the direction to move right
 
         void draw(){                                                        //A function which uses a for loop to traverse through the deque and mark all the positions as dark green.
             for(unsigned int i = 0; i < body.size(); i++){
@@ -37,6 +51,12 @@ class Snake{
                  y * (float)cellSize,(float)cellSize, (float)cellSize};     //For rounded rectangles you need to pass a rectangle structure as the argument. 
                 DrawRectangleRounded(segment, 0.5, 6, darkGreen);           //This in-built function needs the rectangle, the radius, segments(affects the smoothness of the corners) and color
             }                                                               
+        }
+
+
+        void update(){                                                      //To move the snake, all we have to do is remove the last element and add a new element in the front of the dequeue.
+            body.pop_back();
+            body.push_front(body[0] + direction);
         }
 };
 
@@ -109,6 +129,11 @@ int main () {
     while (WindowShouldClose() == false){                                    //Loop to start the game. If pressed escape the loop stops.
         BeginDrawing();
 
+
+        if(eventTriggered(0.2)){                                             //Here we are checking if the interval has exceeded 200 milliseconds.
+            snake.update();
+        }
+        // snake.update();                                                   //We first update the position, then we draw the snake & food.
                                                                              
         ClearBackground(green);                                              //This is for giving the window a new color
         
