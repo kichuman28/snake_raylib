@@ -12,6 +12,9 @@ Color darkGreen = {43, 51, 24, 255};
 
 int cellSize = 30;                                                          //This is basically dividing the screen into cells for placement of objects. Nothing is happening here, 
 int cellCount = 25;                                                         //this just indicates that there is 25 blocks of 30 size each. So 25*30 = 750, which is the size of our screen.
+int offset = 75;
+
+
 
 double lastUpdateTime = 0;                                                  //So this is for updating the position of the snake every 200 milliseconds
 
@@ -58,8 +61,9 @@ class Snake{
                 // DrawRectangle(x * cellSize, y * cellSize, cellSize,      //I am using a rounded rectangle now
                 //  cellSize, darkGreen);  
 
-                Rectangle segment  = Rectangle{x * (float)cellSize,
-                 y * (float)cellSize,(float)cellSize, (float)cellSize};     //For rounded rectangles you need to pass a rectangle structure as the argument. 
+                Rectangle segment  = Rectangle{offset + x * (float)cellSize, //Added offset here to the x & y cooridates to account for the border
+                 offset + y * (float)cellSize,(float)cellSize,              //For rounded rectangles you need to pass a rectangle structure as the argument. 
+                 (float)cellSize};
                 DrawRectangleRounded(segment, 0.5, 6, darkGreen);           //This in-built function needs the rectangle, the radius, segments(affects the smoothness of the corners) and color
             }                                                               
         }
@@ -132,8 +136,8 @@ class Food{                                                                 //Fo
             //  position.y * cellSize, cellSize, cellSize, darkGreen);      //So this is a function to create a rectangle. Needs x & y cooridnates as positions, height and width of the rectangle as well along with the color         
             //                                                              //We are multiplying it with cellSize to get it interms of the window, which is 750 in size. 
         
-            DrawTexture(texture, position.x * cellSize,                     //So now to render the image we can use DrawTexture function.
-            position.y * cellSize, GREEN);                                  //WHITE is more like an overlay
+            DrawTexture(texture, offset + position.x * cellSize,            //So now to render the image we can use DrawTexture function.
+            offset + position.y * cellSize, GREEN);                         //WHITE is more like an overlay. Also added offset here to accoont for the border
         }
 
 };
@@ -205,7 +209,8 @@ class Game{                                                                 //Cr
 int main () {
     cout << "Startig the game..." << endl;
 
-    InitWindow(cellSize * cellCount, cellSize * cellCount, "Retro Snake");   //Starts the window
+    InitWindow(2*offset + cellSize * cellCount,                              //Increased the border by 2*offset to account for both the sides for both x and y axis
+     2*offset + cellSize * cellCount, "Retro Snake");                        //Starts the window
     SetTargetFPS(60);                                                        //Sets the frame rate
 
     // Food food = Food();                                                   //Creating an object to call the Draw function in food class.
@@ -242,11 +247,16 @@ int main () {
 
 
         ClearBackground(green);                                              //This is for giving the window a new color
-        
+        Rectangle border = {(float)offset - 5, (float)offset - 5,            //Added & subtracted some values here and there to properly render the border.
+         (float)cellSize * cellCount + 10,
+         (float)cellSize * cellCount + 10};
+        DrawRectangleLinesEx(border, 5, darkGreen);
+
+
         // food.Draw();                                                      //Calling the draw function for rendering the food.
         // snake.Draw();                                                     //Calling the draw function for showing the snake.
 
-        game.Draw();
+        game.Draw();                                                         //Common function which calls the Draw methods in both the snake and food class.
 
         EndDrawing();
     }
