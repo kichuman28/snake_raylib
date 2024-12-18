@@ -73,6 +73,11 @@ class Snake{
                 body.pop_back();
             }
         }
+
+        void Reset(){                                                       //Just resets the snake to the original position
+            body = {Vector2{6, 9}, Vector2{5, 9}, Vector2{4, 9}};
+            direction = {1, 0};             
+        }
 };
 
 // ----------------------------------------------------------SNAKE CLASS ENDS------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -145,15 +150,19 @@ class Game{                                                                 //Cr
     public:
         Snake snake = Snake();
         Food food = Food(snake.body);
+        bool running = true;                                                //If this variable is true then only the update function is called, i.e the snake starts moving.
 
         void Draw(){                                                        //Used a common method called draw that calls the draw method in both the snake and food class.
             snake.Draw();
             food.Draw();
         }
 
-        void Update(){                                                      
-            snake.Update();
-            CheckCollisionWithFood();                                       //So each time the snake's head's position updates we check is the head's position is equal to the food's position.
+        void Update(){
+            if(running){
+                snake.Update();
+                CheckCollisionWithFood();                                       //So each time the snake's head's position updates we check is the head's position is equal to the food's position.
+                CheckCollisionWithEdges();
+            }                                                      
         }
 
 
@@ -162,6 +171,21 @@ class Game{                                                                 //Cr
                 food.position = food.GenerateRandomPos(snake.body);
                 snake.addSegment = true;                                    //Each time a collision happens the segment is made true, only a cell is added. If it is false then a cell is added AND a cell is removed.
             }
+        }
+
+
+        void CheckCollisionWithEdges(){                                     //Incase the snake goes outside the box, we call the game over method
+            if(snake.body[0].x == cellCount || snake.body[0].x == -1){
+                GameOver();
+            }else if(snake.body[0].y == cellCount || snake.body[0].y == -1){
+                GameOver();
+            }
+        }
+
+        void GameOver(){                                                    //In the game over method, we reset the snake's position back to the original position and provide a new position for the food.
+            snake.Reset();
+            food.position = food.GenerateRandomPos(snake.body);
+            running = false;
         }
 };
 
@@ -192,15 +216,19 @@ int main () {
 
         if(IsKeyPressed(KEY_UP) && game.snake.direction.y != 1){             //Adding key board movements here for each move. The && condition is there so that I can't move in the opposite direction, like 180 degrees  
             game.snake.direction = {0, -1};
+            game.running = true;
         }
         if(IsKeyPressed(KEY_DOWN) && game.snake.direction.y != -1){
             game.snake.direction = {0, 1};
+            game.running = true;                                            //Incase the game stops when the user presses any of the direction keys the snake should start moving again. So just update the running variable to true so that the update function keeps on getting called.
         }
         if(IsKeyPressed(KEY_LEFT) && game.snake.direction.x != 1){
             game.snake.direction = {-1, 0};
+            game.running = true;
         }
         if(IsKeyPressed(KEY_RIGHT) && game.snake.direction.x != -1){
             game.snake.direction = {1, 0};
+            game.running = true;
         }
 
 
