@@ -4,7 +4,6 @@
 #include <raymath.h>
 
 using namespace std;
-// ----------------------------------------------------------GLOBAL VARIABLES------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 Color green = {173, 204, 93, 255};                                          //"Color" is an in-built struct in which the first 3 items are RGB and last one is intensity
 Color darkGreen = {43, 51, 24, 255};
