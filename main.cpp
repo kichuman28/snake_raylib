@@ -162,6 +162,7 @@ class Game{                                                                 //Cr
                 snake.Update();
                 CheckCollisionWithFood();                                       //So each time the snake's head's position updates we check is the head's position is equal to the food's position.
                 CheckCollisionWithEdges();
+                CheckCollisionWithTail();
             }                                                      
         }
 
@@ -186,6 +187,14 @@ class Game{                                                                 //Cr
             snake.Reset();
             food.position = food.GenerateRandomPos(snake.body);
             running = false;
+        }
+
+        void CheckCollisionWithTail(){                                      //A function for checking if the snake hit it's own tail
+            deque<Vector2> headlessBody = snake.body;                       //First we create copy
+            headlessBody.pop_front();                                       //Then we remove the head because in the function it'll always return true if the head is there in the copy.
+            if(ElementInDeque(snake.body[0], headlessBody)){                //Now we check if the body's head is present in the headless body. This will only become true it collides with each other.
+                GameOver();                                     
+            }
         }
 };
 
