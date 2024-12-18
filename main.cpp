@@ -37,14 +37,8 @@ bool ElementInDeque(Vector2 element, deque<Vector2> deque){                 //Ch
 }
 
 
-// ----------------------------------------------------------GLOBAL VARIABLES ENDS HERE------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
-
-
-
-
-// ----------------------------------------------------------SNAKE CLASS------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 class Snake{
     public:
@@ -84,14 +78,7 @@ class Snake{
         }
 };
 
-// ----------------------------------------------------------SNAKE CLASS ENDS------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-
-
-
-
-
-// ----------------------------------------------------------FOOD CLASS------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 class Food{                                                                 //For the class Food, you need to know the x and y coordinate of the food. 
     public:                                                                 //So we can set that as the attribute in a in-built struct called Vector2 which stores the coordinates.
@@ -142,13 +129,7 @@ class Food{                                                                 //Fo
 
 };
 
-// ----------------------------------------------------------FOOD CLASS ENDS HERE------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-
-
-
-
-// ----------------------------------------------------------GAME CLASS------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 class Game{                                                                 //Created a new Game class for better code management.
     public:
@@ -156,6 +137,23 @@ class Game{                                                                 //Cr
         Food food = Food(snake.body);
         bool running = true;                                                //If this variable is true then only the update function is called, i.e the snake starts moving.
         int score = 0;                                                      //A variable for keeping track of the score
+        Sound eatSound;                                                     //Make two attributes for storing the sounds
+        Sound wallSound;
+
+
+        Game(){                                                             //In a constructor, load the audio device, store the sounds from the folders
+            InitAudioDevice();
+            eatSound = LoadSound("Sounds/eat.mp3");                         
+            wallSound = LoadSound("Sounds/wall.mp3");
+        }
+
+
+        ~Game(){                                                            //In the destructor, unload the sounds and close the audio devices. 
+            UnloadSound(eatSound);
+            UnloadSound(wallSound);
+            CloseAudioDevice();
+        }
+
 
         void Draw(){                                                        //Used a common method called draw that calls the draw method in both the snake and food class.
             snake.Draw();
@@ -165,7 +163,7 @@ class Game{                                                                 //Cr
         void Update(){
             if(running){
                 snake.Update();
-                CheckCollisionWithFood();                                       //So each time the snake's head's position updates we check is the head's position is equal to the food's position.
+                CheckCollisionWithFood();                                   //So each time the snake's head's position updates we check is the head's position is equal to the food's position.
                 CheckCollisionWithEdges();
                 CheckCollisionWithTail();
             }                                                      
@@ -177,6 +175,7 @@ class Game{                                                                 //Cr
                 food.position = food.GenerateRandomPos(snake.body);
                 snake.addSegment = true;                                    //Each time a collision happens the segment is made true, only a cell is added. If it is false then a cell is added AND a cell is removed.
                 score++;                                                    //Each time the snake collides with the food increment the score by one
+                PlaySound(eatSound);
             }
         }
 
@@ -194,6 +193,7 @@ class Game{                                                                 //Cr
             food.position = food.GenerateRandomPos(snake.body);
             running = false;
             score = 0;                                                      //THe score becomes 0 each time the game restarts
+            PlaySound(wallSound);
         }
 
         void CheckCollisionWithTail(){                                      //A function for checking if the snake hit it's own tail
