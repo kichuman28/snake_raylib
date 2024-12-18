@@ -126,8 +126,16 @@ class Game{                                                                 //Cr
             food.Draw();
         }
 
-        void Update(){
+        void Update(){                                                      
             snake.Update();
+            CheckCollisionWithFood();                                       //So each time the snake's head's position updates we check is the head's position is equal to the food's position.
+        }
+
+
+        void CheckCollisionWithFood(){                                      //So this function is used to check if the snake's head's position matches the food's position. This is done for the snake to eat the food.
+            if(Vector2Equals(snake.body[0], food.position)){
+                cout << "Eating food" << endl;
+            }
         }
 };
 
