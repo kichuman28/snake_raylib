@@ -134,7 +134,21 @@ int main () {
             snake.update();
         }
         // snake.update();                                                   //We first update the position, then we draw the snake & food.
-                                                                             
+
+        if(IsKeyPressed(KEY_UP) && snake.direction.y != 1){
+            snake.direction = {0, -1};
+        }
+        if(IsKeyPressed(KEY_DOWN) && snake.direction.y != -1){
+            snake.direction = {0, 1};
+        }
+        if(IsKeyPressed(KEY_LEFT) && snake.direction.x != 1){
+            snake.direction = {-1, 0};
+        }
+        if(IsKeyPressed(KEY_RIGHT) && snake.direction.x != -1){
+            snake.direction = {1, 0};
+        }
+
+
         ClearBackground(green);                                              //This is for giving the window a new color
         
         food.Draw();                                                         //Calling the draw function for rendering the food.
