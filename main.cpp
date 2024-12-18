@@ -155,6 +155,7 @@ class Game{                                                                 //Cr
         Snake snake = Snake();
         Food food = Food(snake.body);
         bool running = true;                                                //If this variable is true then only the update function is called, i.e the snake starts moving.
+        int score = 0;                                                      //A variable for keeping track of the score
 
         void Draw(){                                                        //Used a common method called draw that calls the draw method in both the snake and food class.
             snake.Draw();
@@ -175,6 +176,7 @@ class Game{                                                                 //Cr
             if(Vector2Equals(snake.body[0], food.position)){
                 food.position = food.GenerateRandomPos(snake.body);
                 snake.addSegment = true;                                    //Each time a collision happens the segment is made true, only a cell is added. If it is false then a cell is added AND a cell is removed.
+                score++;                                                    //Each time the snake collides with the food increment the score by one
             }
         }
 
@@ -191,6 +193,7 @@ class Game{                                                                 //Cr
             snake.Reset();
             food.position = food.GenerateRandomPos(snake.body);
             running = false;
+            score = 0;                                                      //THe score becomes 0 each time the game restarts
         }
 
         void CheckCollisionWithTail(){                                      //A function for checking if the snake hit it's own tail
@@ -250,13 +253,17 @@ int main () {
         Rectangle border = {(float)offset - 5, (float)offset - 5,            //Added & subtracted some values here and there to properly render the border.
          (float)cellSize * cellCount + 10,
          (float)cellSize * cellCount + 10};
-        DrawRectangleLinesEx(border, 5, darkGreen);
+        DrawRectangleLinesEx(border, 5, darkGreen);                          //This line of code helps to draw a border for the snake's play area
 
 
         // food.Draw();                                                      //Calling the draw function for rendering the food.
         // snake.Draw();                                                     //Calling the draw function for showing the snake.
 
-        DrawText("Retro Snake", offset - 5, 20, 40, darkGreen);
+        DrawText("Retro Snake", offset - 5, 20, 40, darkGreen);              //This line of code helps to draw a text 
+        
+        DrawText(TextFormat("%i", game.score), offset - 5,                   //This line of code shows the score of the game
+        offset + cellSize * cellCount + 10,40, darkGreen);
+        
         game.Draw();                                                         //Common function which calls the Draw methods in both the snake and food class.
 
         EndDrawing();
