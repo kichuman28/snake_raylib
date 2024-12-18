@@ -40,7 +40,7 @@ class Snake{
          Vector2{4, 9}};
         Vector2 direction = {1, 0};                                         //Storing the direction to move right
 
-        void draw(){                                                        //A function which uses a for loop to traverse through the deque and mark all the positions as dark green.
+        void Draw(){                                                        //A function which uses a for loop to traverse through the deque and mark all the positions as dark green.
             for(unsigned int i = 0; i < body.size(); i++){
                 float x = body[i].x;
                 float y = body[i].y;
@@ -54,7 +54,7 @@ class Snake{
         }
 
 
-        void update(){                                                      //To move the snake, all we have to do is remove the last element and add a new element in the front of the dequeue.
+        void Update(){                                                      //To move the snake, all we have to do is remove the last element and add a new element in the front of the dequeue.
             body.pop_back();
             body.push_front(body[0] + direction);
         }
@@ -114,6 +114,24 @@ class Food{                                                                 //Fo
 
 
 
+// ----------------------------------------------------------GAME CLASS------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+class Game{                                                                 //Created a new Game class for better code management.
+    public:
+        Snake snake = Snake();
+        Food food = Food();
+
+        void Draw(){                                                        //Used a common method called draw that calls the draw method in both the snake and food class.
+            snake.Draw();
+            food.Draw();
+        }
+
+        void Update(){
+            snake.Update();
+        }
+};
+
+
 
 
 
@@ -123,36 +141,41 @@ int main () {
     InitWindow(cellSize * cellCount, cellSize * cellCount, "Retro Snake");   //Starts the window
     SetTargetFPS(60);                                                        //Sets the frame rate
 
-    Food food = Food();                                                      //Creating an object to call the Draw function in food class.
-    Snake snake = Snake();                                                   //Creating an object to call the Draw function in snake class.
+    // Food food = Food();                                                   //Creating an object to call the Draw function in food class.
+    // Snake snake = Snake();                                                //Creating an object to call the Draw function in snake class.
+
+    Game game = Game();                                                      //Created an object of game class to call the functions
+
 
     while (WindowShouldClose() == false){                                    //Loop to start the game. If pressed escape the loop stops.
         BeginDrawing();
 
 
         if(eventTriggered(0.2)){                                             //Here we are checking if the interval has exceeded 200 milliseconds.
-            snake.update();
+            game.Update();
         }
         // snake.update();                                                   //We first update the position, then we draw the snake & food.
 
-        if(IsKeyPressed(KEY_UP) && snake.direction.y != 1){
-            snake.direction = {0, -1};
+        if(IsKeyPressed(KEY_UP) && game.snake.direction.y != 1){             //Adding key board movements here for each move. The && condition is there so that I can't move in the opposite direction, like 180 degrees  
+            game.snake.direction = {0, -1};
         }
-        if(IsKeyPressed(KEY_DOWN) && snake.direction.y != -1){
-            snake.direction = {0, 1};
+        if(IsKeyPressed(KEY_DOWN) && game.snake.direction.y != -1){
+            game.snake.direction = {0, 1};
         }
-        if(IsKeyPressed(KEY_LEFT) && snake.direction.x != 1){
-            snake.direction = {-1, 0};
+        if(IsKeyPressed(KEY_LEFT) && game.snake.direction.x != 1){
+            game.snake.direction = {-1, 0};
         }
-        if(IsKeyPressed(KEY_RIGHT) && snake.direction.x != -1){
-            snake.direction = {1, 0};
+        if(IsKeyPressed(KEY_RIGHT) && game.snake.direction.x != -1){
+            game.snake.direction = {1, 0};
         }
 
 
         ClearBackground(green);                                              //This is for giving the window a new color
         
-        food.Draw();                                                         //Calling the draw function for rendering the food.
-        snake.draw();                                                        //Calling the draw function for showing the snake.
+        // food.Draw();                                                      //Calling the draw function for rendering the food.
+        // snake.Draw();                                                     //Calling the draw function for showing the snake.
+
+        game.Draw();
 
         EndDrawing();
     }
