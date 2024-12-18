@@ -48,6 +48,8 @@ class Snake{
         deque<Vector2> body = {Vector2{6, 9}, Vector2{5, 9},                //So I need a snake class for drawing the body of the snake. Using a deque as the body. Currently hardcoding 3 positions for the snake
          Vector2{4, 9}};
         Vector2 direction = {1, 0};                                         //Storing the direction to move right
+        bool addSegment = false;                                            //A new attribute to check whether the snake has eaten a food or not
+
 
         void Draw(){                                                        //A function which uses a for loop to traverse through the deque and mark all the positions as dark green.
             for(unsigned int i = 0; i < body.size(); i++){
@@ -64,8 +66,12 @@ class Snake{
 
 
         void Update(){                                                      //To move the snake, all we have to do is remove the last element and add a new element in the front of the dequeue.
-            body.pop_back();
-            body.push_front(body[0] + direction);
+            body.push_front(Vector2Add(body[0], direction));
+            if(addSegment){                                                 //Just made an attribute which checks if a collision happened or not. If yes, then only an element is added &  the variable is set back to false. If not an element is added and removed to move the snake
+                addSegment = false; 
+            }else{
+                body.pop_back();
+            }
         }
 };
 
@@ -154,6 +160,7 @@ class Game{                                                                 //Cr
         void CheckCollisionWithFood(){                                      //So this function is used to check if the snake's head's position matches the food's position. This is done for the snake to eat the food.
             if(Vector2Equals(snake.body[0], food.position)){
                 food.position = food.GenerateRandomPos(snake.body);
+                snake.addSegment = true;                                    //Each time a collision happens the segment is made true, only a cell is added. If it is false then a cell is added AND a cell is removed.
             }
         }
 };
