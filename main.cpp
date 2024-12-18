@@ -256,6 +256,7 @@ int main () {
         // food.Draw();                                                      //Calling the draw function for rendering the food.
         // snake.Draw();                                                     //Calling the draw function for showing the snake.
 
+        DrawText("Retro Snake", offset - 5, 20, 40, darkGreen);
         game.Draw();                                                         //Common function which calls the Draw methods in both the snake and food class.
 
         EndDrawing();
