@@ -24,6 +24,15 @@ bool eventTriggered(double interval){                                       //Fo
     return false;
 }
 
+bool ElementInDeque(Vector2 element, deque<Vector2> deque){                 //Checks if the new position is somewhere along the snake's body. If yes it returns true and a new position is genrated. Else returns false
+    for(unsigned int i = 0; i < deque.size(); i++){
+        if(Vector2Equals(element, deque[i])){
+            return true;
+        }
+    }
+    return false;
+}
+
 
 // ----------------------------------------------------------GLOBAL VARIABLES ENDS HERE------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -74,12 +83,12 @@ class Food{                                                                 //Fo
         Vector2 position;                                                   //Here this stands for 5th row and 6th column.
         Texture2D texture;                                                  //So Texture2D is a data structure that allows us to convert the image to a type that can be rendered on screen in the most optimal way.
 
-        Food(){                                                             //So this is like the init function(constructor), we want this called whenever an object is made. Here we want the image to be loaded each time the object is made.
+        Food(deque<Vector2> snakeBody){                                                             //So this is like the init function(constructor), we want this called whenever an object is made. Here we want the image to be loaded each time the object is made.
 
             Image image = LoadImage("Graphics/food.png");
             texture = LoadTextureFromImage(image);                          //Loads the texture from the image.
             UnloadImage(image);                                             //Unloads the image to free some memory.
-            position = GenerateRandomPos();
+            position = GenerateRandomPos(snakeBody);
 
         }
 
@@ -88,12 +97,22 @@ class Food{                                                                 //Fo
             UnloadTexture(texture);                                         //This is for unloading the texture after the object is destroyed. This is called a destructor.
         }
 
-
-        Vector2 GenerateRandomPos(){                                        //A random position generator function so that each time the game loads the food is at a different position.
+        Vector2 GenerateRandomCell(){                                       //A helper function for generating random cells.
             float x = GetRandomValue(0, cellCount - 1);
             float y = GetRandomValue(0, cellCount - 1);
 
             return Vector2{x, y};
+        }
+
+
+        Vector2 GenerateRandomPos(deque<Vector2> snakeBody){                //A random position generator function so that each time the game loads the food is at a different position.
+
+            Vector2 position = GenerateRandomCell();                        //Takes in the snake body as argument, passes it to the global bool function, generates new position if true or else continues with the same position. 
+            if(ElementInDeque(position, snakeBody)){
+                position = GenerateRandomCell();
+            }
+
+            return position;
         }
 
 
@@ -119,7 +138,7 @@ class Food{                                                                 //Fo
 class Game{                                                                 //Created a new Game class for better code management.
     public:
         Snake snake = Snake();
-        Food food = Food();
+        Food food = Food(snake.body);
 
         void Draw(){                                                        //Used a common method called draw that calls the draw method in both the snake and food class.
             snake.Draw();
@@ -134,7 +153,7 @@ class Game{                                                                 //Cr
 
         void CheckCollisionWithFood(){                                      //So this function is used to check if the snake's head's position matches the food's position. This is done for the snake to eat the food.
             if(Vector2Equals(snake.body[0], food.position)){
-                cout << "Eating food" << endl;
+                food.position = food.GenerateRandomPos(snake.body);
             }
         }
 };
